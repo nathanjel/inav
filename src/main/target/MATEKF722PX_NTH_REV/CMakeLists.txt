@@ -1,0 +1,2 @@
+target_stm32f722xe(MATEKF722PX_NTH_REV)
+target_stm32f722xe(MATEKF722WPX_NTH_REV)
