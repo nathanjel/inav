@@ -20,6 +20,8 @@
 | acczero_x | 0 | Calculated value after '6 position avanced calibration'. See Wiki page. |
 | acczero_y | 0 | Calculated value after '6 position avanced calibration'. See Wiki page. |
 | acczero_z | 0 | Calculated value after '6 position avanced calibration'. See Wiki page. |
+| airmode_throttle_threshold | 1300 | Defines airmode THROTTLE activation threshold when `airmode_type` **THROTTLE_THRESHOLD** is used |
+| airmode_type | STICK_CENTER | Defines the Airmode state handling type. Default **STICK_CENTER** is the classical approach in which Airmode is always active if enabled, but when the throttle is low and ROLL/PITCH/YAW sticks are centered, Iterms is not allowed to grow (ANTI_WINDUP). **THROTTLE_THRESHOLD** is the Airmode behavior known from Betaflight. In this mode, Airmode is active as soon THROTTLE position is above `airmode_throttle_threshold` and stays active until disarm. ANTI_WINDUP is never triggered. For small Multirotors (up to 7-inch propellers) it is suggested to switch to **THROTTLE_THRESHOLD** since it keeps full stabilization no matter what pilot does with the sticks. Fixed Wings always use **STICK_CENTER_ONCE** or **STICK_CENTER** modes. |
 | airspeed_adc_channel | 0 | ADC channel to use for analog pitot tube (airspeed) sensor. If board doesn't have a dedicated connector for analog airspeed sensor will default to 0 |
 | align_acc | DEFAULT | When running on non-default hardware or adding support for new sensors/sensor boards, these values are used for sensor orientation. When carefully understood, these values can also be used to rotate (in 90deg steps) or flip the board. Possible values are: DEFAULT, CW0_DEG, CW90_DEG, CW180_DEG, CW270_DEG, CW0_DEG_FLIP, CW90_DEG_FLIP, CW180_DEG_FLIP, CW270_DEG_FLIP. |
 | align_board_pitch | 0 | Arbitrary board rotation in deci-degrees (0.1 degree), to allow mounting it sideways / upside down / rotated etc |
@@ -120,6 +122,7 @@
 | fw_i_yaw | 10 | Fixed-wing rate stabilisation I-gain for YAW |
 | fw_iterm_limit_stick_position | 0.5 | Iterm is not allowed to grow when stick position is above threshold. This solves the problem of bounceback or followthrough when full stick deflection is applied on poorely tuned fixed wings. In other words, stabilization is partialy disabled when pilot is actively controlling the aircraft and active when sticks are not touched. `0` mean stick is in center position, `1` means it is fully deflected to either side |
 | fw_iterm_throw_limit | 165 | Limits max/min I-term value in stabilization PID controller in case of Fixed Wing. It solves the problem of servo saturation before take-off/throwing the airplane into the air. By default, error accumulated in I-term can not exceed 1/3 of servo throw (around 165us). Set 0 to disable completely. |
+| fw_level_pitch_trim | 0 | Pitch trim for self-leveling flight modes. In degrees. +5 means airplane nose should be raised 5 deg from level |
 | fw_loiter_direction | RIGHT | Direction of loitering: center point on right wing (clockwise - default), or center point on left wing (counterclockwise). If equal YAW then can be changed in flight using a yaw stick. |
 | fw_min_throttle_down_pitch | 0 | Automatic pitch down angle when throttle is at 0 in angle mode. Progressively applied between cruise throttle and zero throttle (decidegrees) |
 | fw_p_level | 20 | Fixed-wing attitude stabilisation P-gain |
@@ -216,8 +219,6 @@
 | max_angle_inclination_rll | 300 | Maximum inclination in level (angle) mode (ROLL axis). 100=10° |
 | max_check | 1900 | These are min/max values (in us) which, when a channel is smaller (min) or larger (max) than the value will activate various RC commands, such as arming, or stick configuration. Normally, every RC channel should be set so that min = 1000us, max = 2000us. On most transmitters this usually means 125% endpoints. Default check values are 100us above/below this value. |
 | max_throttle | 1850 | This is the maximum value (in us) sent to esc when armed. Default of 1850 are OK for everyone (legacy). For modern ESCs, higher values (c. 2000) may be more appropriate. If you have brushed motors, the value should be set to 2000. |
-| mc_airmode_threshold | 1300 | Defines airmode THROTTLE activation threshold when `mc_airmode_type` **THROTTLE_THRESHOLD** is used |
-| mc_airmode_type | STICK_CENTER | Defines the Airmode state handling type for Multirotors. Default **STICK_CENTER** is the classical approach in which Airmode is always active if enabled, but when the throttle is low and ROLL/PITCH/YAW sticks are centered, Iterms is not allowed to grow (ANTI_WINDUP). **THROTTLE_THRESHOLD** is the Airmode behavior known from Betaflight. In this mode, Airmode is active as soon THROTTLE position is above `mc_airmode_threshold` and stays active until disarm. ANTI_WINDUP is never triggered. For small Multirotors (up to 7-inch propellers) it is suggested to switch to **THROTTLE_THRESHOLD** since it keeps full stabilization no matter what pilot does with the sticks. Fixed Wings always use **STICK_CENTER** mode. |
 | mc_cd_lpf_hz | 30 | Cutoff frequency for Control Derivative. Lower value smoother reaction on fast stick movements. With higher values, response will be more aggressive, jerky |
 | mc_cd_pitch | 60 | Multicopter Control Derivative gain for PITCH |
 | mc_cd_roll | 60 | Multicopter Control Derivative gain for ROLL |
@@ -277,7 +278,7 @@
 | nav_fw_launch_thr | 1700 | Launch throttle - throttle to be set during launch sequence (pwm units) |
 | nav_fw_launch_timeout | 5000 | Maximum time for launch sequence to be executed. After this time LAUNCH mode will be turned off and regular flight mode will take over (ms) |
 | nav_fw_launch_velocity | 300 | Forward velocity threshold for swing-launch detection [cm/s] |
-| nav_fw_loiter_radius | 5000 | PosHold radius. 3000 to 7500 is a good value (30-75m) [cm] |
+| nav_fw_loiter_radius | 7500 | PosHold radius. 3000 to 7500 is a good value (30-75m) [cm] |
 | nav_fw_max_thr | 1700 | Maximum throttle for flying wing in GPS assisted modes |
 | nav_fw_min_thr | 1200 | Minimum throttle for flying wing in GPS assisted modes |
 | nav_fw_pitch2thr | 10 | Amount of throttle applied related to pitch attitude in GPS assisted modes. Throttle = nav_fw_cruise_throttle - (nav_fw_pitch2thr * pitch_angle). (notice that pitch_angle is in degrees and is negative when climbing and positive when diving, and throttle value is constrained between nav_fw_min_thr and nav_fw_max_thr) |
@@ -501,6 +502,7 @@
 | vtx_max_power_override | 0 | Some VTXes may report max power incorrectly (i.e. 200mW for a 600mW VTX). Use this to override max supported power. 0 to disable and use whatever VTX reports as its capabilities |
 | vtx_pit_mode_chan |  |  |
 | vtx_power | 1 | VTX RF power level to use. The exact number of mw depends on the VTX hardware. |
+| vtx_smartaudio_early_akk_workaround | ON | Enable workaround for early AKK SAudio-enabled VTX bug. |
 | yaw_deadband | 5 | These are values (in us) by how much RC input can be different before it's considered valid. For transmitters with jitter on outputs, this value can be increased. Defaults are zero, but can be increased up to 10 or so if rc inputs twitch while idle. |
 | yaw_lpf_hz | 30 | Yaw low pass filter cutoff frequency. Should be disabled (set to `0`) on small multirotors (7 inches and below) |
 | yaw_rate | 20 | Defines rotation rate on YAW axis that UAV will try to archive on max. stick deflection. Rates are defined in tens of degrees (deca-degrees) per second [rate = dps/10]. That means, rate 20 represents 200dps rotation speed. Default 20 (200dps) is more less equivalent of old Cleanflight/Baseflight rate 0. Max. 180 (1800dps) is what gyro can measure. |
