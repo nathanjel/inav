@@ -24,31 +24,4 @@
 
 #pragma once
 
-#include "config/parameter_group.h"
-#include "common/time.h"
-#include "common/fp_pid.h"
-
-#include "programming/logic_condition.h"
-#include "common/axis.h"
-#include "flight/pid.h"
-
-#define MAX_PROGRAMMING_PID_COUNT 4
-
-typedef struct programmingPid_s {
-    uint8_t enabled;
-    logicOperand_t setpoint;
-    logicOperand_t measurement;
-    pid8_t gains;
-} programmingPid_t;
-
-PG_DECLARE_ARRAY(programmingPid_t, MAX_PROGRAMMING_PID_COUNT, programmingPids);
-
-typedef struct programmingPidState_s {
-    pidController_t controller;
-    float output;
-} programmingPidState_t;
-
-void programmingPidUpdateTask(timeUs_t currentTimeUs);
-void programmingPidInit(void);
-void programmingPidReset(void);
-int32_t programmingPidGetOutput(uint8_t i);
+bool rm3100MagDetect(magDev_t *mag);

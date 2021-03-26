@@ -22,33 +22,26 @@
  * along with this program. If not, see http://www.gnu.org/licenses/.
  */
 
-#pragma once
+#ifndef INAV_CIRCULAR_QUEUE_H
+#define INAV_CIRCULAR_QUEUE_H
 
-#include "config/parameter_group.h"
-#include "common/time.h"
-#include "common/fp_pid.h"
+#include "stdint.h"
+#include "string.h"
 
-#include "programming/logic_condition.h"
-#include "common/axis.h"
-#include "flight/pid.h"
+typedef struct circularBuffer_s{
+    size_t head;
+    size_t tail;
+    size_t bufferSize;
+    uint8_t * buffer;
+    size_t elementSize;
+    size_t size;
+}circularBuffer_t;
 
-#define MAX_PROGRAMMING_PID_COUNT 4
+void    circularBufferInit(circularBuffer_t * circularBuffer, uint8_t * buffer, size_t bufferSize, size_t bufferElementSize);
+void    circularBufferPushElement(circularBuffer_t * circularBuffer, uint8_t * element);
+void    circularBufferPopHead(circularBuffer_t * circularBuffer, uint8_t * element);
+int     circularBufferIsFull(circularBuffer_t * circularBuffer);
+int     circularBufferIsEmpty(circularBuffer_t *circularBuffer);
+size_t  circularBufferCountElements(circularBuffer_t * circularBuffer);
 
-typedef struct programmingPid_s {
-    uint8_t enabled;
-    logicOperand_t setpoint;
-    logicOperand_t measurement;
-    pid8_t gains;
-} programmingPid_t;
-
-PG_DECLARE_ARRAY(programmingPid_t, MAX_PROGRAMMING_PID_COUNT, programmingPids);
-
-typedef struct programmingPidState_s {
-    pidController_t controller;
-    float output;
-} programmingPidState_t;
-
-void programmingPidUpdateTask(timeUs_t currentTimeUs);
-void programmingPidInit(void);
-void programmingPidReset(void);
-int32_t programmingPidGetOutput(uint8_t i);
+#endif //INAV_CIRCULAR_QUEUE_H

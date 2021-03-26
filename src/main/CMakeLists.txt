@@ -48,6 +48,8 @@ main_sources(COMMON_SRC
     common/typeconversion.h
     common/uvarint.c
     common/uvarint.h
+    common/circular_queue.c
+    common/circular_queue.h
 
     config/config_eeprom.c
     config/config_eeprom.h
@@ -73,6 +75,8 @@ main_sources(COMMON_SRC
     drivers/accgyro/accgyro_adxl345.h
     drivers/accgyro/accgyro_bma280.c
     drivers/accgyro/accgyro_bma280.h
+    drivers/accgyro/accgyro_bmi088.c
+    drivers/accgyro/accgyro_bmi088.h
     drivers/accgyro/accgyro_bmi160.c
     drivers/accgyro/accgyro_bmi160.h
     drivers/accgyro/accgyro_fake.c
@@ -152,6 +156,8 @@ main_sources(COMMON_SRC
     drivers/compass/compass_mpu9250.h
     drivers/compass/compass_qmc5883l.c
     drivers/compass/compass_qmc5883l.h
+    drivers/compass/compass_rm3100.c
+    drivers/compass/compass_rm3100.h
     drivers/compass/compass_msp.c
     drivers/compass/compass_msp.h
 
